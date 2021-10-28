@@ -1,4 +1,4 @@
-package edu.wdu;
+package edu.wsu;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

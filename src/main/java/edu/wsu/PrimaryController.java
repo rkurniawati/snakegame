@@ -1,4 +1,4 @@
-package edu.wdu;
+package edu.wsu;
 
 import java.io.IOException;
 import javafx.fxml.FXML;
