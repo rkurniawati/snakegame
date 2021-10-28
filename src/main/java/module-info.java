@@ -1,4 +1,4 @@
-module edu.wdu {
+module edu.wsu {
     requires javafx.controls;
     requires javafx.fxml;
 
