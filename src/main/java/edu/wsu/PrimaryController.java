@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 
 public class PrimaryController {
 
@@ -19,12 +20,16 @@ public class PrimaryController {
     @FXML
     ColorPicker snakeColorPicker;
 
-    @FXML
-    private void switchToSecondary() throws IOException {
-        App.setRoot("secondary");
+    public void handleButtonAction(ActionEvent actionEvent) {
+
+        System.out.println(playerName.getText());
     }
 
-    public void handleButtonAction(ActionEvent actionEvent) {
-        System.out.println(playerName.getText());
+    public void initialize() {
+        for(int i = 1; i < 10; i++) {
+            snakeLength.getItems().add(i);
+        }
+        snakeLength.setValue(6);
+        snakeColorPicker.setValue(Color.GREEN);
     }
 }
