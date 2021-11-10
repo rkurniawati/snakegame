@@ -28,25 +28,6 @@ public class TestApp extends Application {
         // top left circle
         Circle head = new Circle(RADIUS, 400-RADIUS, RADIUS, Color.RED);
         pane.getChildren().add(head);
-        pane.setOnKeyPressed(event -> {
-            double x = head.getCenterX();
-            double y = head.getCenterY();
-            switch (event.getCode()) {
-                case UP:
-                    head.setCenterY(y - 2 * RADIUS);
-                    break;
-                case DOWN:
-                    head.setCenterY(y + 2 * RADIUS);
-                    break;
-                 case LEFT:
-                    head.setCenterX(x - 2 * RADIUS);
-                    break;
-                case RIGHT:
-                    head.setCenterX(x + 2 * RADIUS);
-                    break;
-            }
-        });
-
         Scene scene = new Scene(pane, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -58,6 +39,12 @@ public class TestApp extends Application {
                 event -> {
                     if (direction == Direction.R && head.getCenterX() >= 600 -RADIUS) {
                         direction = Direction.U;
+                    } else if (direction == Direction.L && head.getCenterX() <= RADIUS) {
+                        direction = Direction.D;
+                    } else if (direction == Direction.U && head.getCenterY() <= RADIUS) {
+                        direction = Direction.L;
+                    } else if (direction == Direction.D && head.getCenterY() >= 400-RADIUS) {
+                        direction = Direction.R;
                     }
 
                     switch (direction) {
@@ -76,6 +63,33 @@ public class TestApp extends Application {
                             break;
                     }
                 }));
+
+        pane.setOnKeyPressed(event -> {
+            double x = head.getCenterX();
+            double y = head.getCenterY();
+            switch (event.getCode()) {
+                case UP:
+                    timeline.pause();
+                    head.setCenterY(Math.max(0, y - 2 * RADIUS));
+                    break;
+                case DOWN:
+                    timeline.pause();
+                    head.setCenterY(Math.min(400, y + 2 * RADIUS));
+                    break;
+                case LEFT:
+                    timeline.pause();
+                    head.setCenterX(Math.max(0, x - 2 * RADIUS));
+                    break;
+                case RIGHT:
+                    timeline.pause();
+                    head.setCenterX(Math.min(400, x + 2 * RADIUS));
+                    break;
+                case ESCAPE:
+                    timeline.play();
+                    break;
+            }
+        });
+
         timeline.play();
     }
 }
