@@ -40,7 +40,7 @@ public class PrimaryController {
         Node src = (Node) actionEvent.getSource();
         Stage stage = (Stage) src.getScene().getWindow();
 
-        SnakeGameInfo gameInfo = new SnakeGameInfo(this.playerName.getText(), 1, 2,
+        SnakeGameInfo gameInfo = new SnakeGameInfo(this.playerName.getText(), numLives.getValue(), numFruits.getValue(),
                 snakeFruitColor.getValue(), this.snakeLength.getValue(), snakeHeadColor.getValue(), snakeBodyColor.getValue());
         SnakePane sp = new SnakePane(gameInfo);
         Scene scene = new Scene(new StackPane(sp), 600, 400);

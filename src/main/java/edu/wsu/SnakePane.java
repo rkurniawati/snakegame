@@ -3,9 +3,6 @@ package edu.wsu;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -34,16 +31,12 @@ public class SnakePane extends AnchorPane {
 
     private Timeline timeline;
 
+    private StackPane restartMessage;
+
     public SnakePane(SnakeGameInfo gameInfo) {
         this.gameInfo = gameInfo;
 
-        // set movement to right
-        this.dx = 2*RADIUS;
-        this.dy = 0;
         this.random = new Random(123);
-
-        this.snake = new LinkedList<>();
-        this.fruitCollection = new LinkedList<>();
     }
 
     boolean moveSnake() {
@@ -82,6 +75,8 @@ public class SnakePane extends AnchorPane {
 
     // generate numFruit on a pane with width and height,
     void generateFruits() {
+        this.fruitCollection = new LinkedList<>();
+
         // calculate grid width and height
         double gridSize = RADIUS * 2;
         double width = getWidth(), height = getHeight();
@@ -111,6 +106,8 @@ public class SnakePane extends AnchorPane {
     }
 
     private void createSnake() {
+        this.snake = new LinkedList<>();
+
         double centerX = ((int)(getWidth()/2/(2*RADIUS)))*2*RADIUS+RADIUS;
         double centerY = ((int)(getHeight()/2/(2*RADIUS)))*2*RADIUS+RADIUS;
         Circle head = new Circle(centerX, centerY, RADIUS, this.gameInfo.getHeadColor());
@@ -119,12 +116,18 @@ public class SnakePane extends AnchorPane {
             Circle bodySegment = new Circle(centerX - i * 2 *RADIUS, centerY, RADIUS, this.gameInfo.getBodyColor());
             snake.add(bodySegment);
         }
+
+
     }
 
 
     public void startGame() {
         createSnake();
         getChildren().addAll(snake);
+
+        // set movement to right
+        this.dx = 2*RADIUS;
+        this.dy = 0;
 
         generateFruits();
         getChildren().addAll(fruitCollection);
@@ -140,6 +143,12 @@ public class SnakePane extends AnchorPane {
 
         this.setOnKeyPressed(event -> {
             switch (event.getCode()) {
+                case SPACE:
+                    if (timeline.getStatus() == Animation.Status.PAUSED && restartMessage != null) {
+                        ((StackPane) this.getParent()).getChildren().remove(restartMessage);
+                        timeline.play();
+                    }
+                    break;
                 case UP:
                     if (this.dy > 0) break; // shouldn't go up if currently moving down
                     this.dx = 0; this.dy = -2 * RADIUS;
@@ -175,6 +184,7 @@ public class SnakePane extends AnchorPane {
                 timeline.stop();
                 gameOver();
             } else {
+                timeline.pause();
                 restartGame();
             }
         } else {
@@ -207,9 +217,31 @@ public class SnakePane extends AnchorPane {
     }
 
     private void restartGame() {
+        getChildren().clear();
+
+        createSnake();
+        getChildren().addAll(snake);
+
+        // set movement to right
+        this.dx = 2*RADIUS;
+        this.dy = 0;
+
+        generateFruits();
+        getChildren().addAll(fruitCollection);
+
+        gameInfo.setLivesRemaining(gameInfo.getLivesRemaining()-1);
+
+        if (restartMessage == null) {
+            Text text = new Text("Press space to continue. Number of lives remaining: " + gameInfo.getLivesRemaining());
+            text.setFont(Font.font ("Verdana", 20));
+            text.setFill(Color.BLACK);
+            restartMessage = new StackPane(text);
+            ((StackPane) this.getParent()).getChildren().add(restartMessage);
+        }
     }
 
     private void gameOver() {
+
         StackPane parent = (StackPane) this.getScene().getRoot();
         StackPane pane = new StackPane();
         Text text = new Text("Game Over, " + (gameInfo.getPlayerName().length() == 0 ? "" : ", ") + "score " + gameInfo.getScore());
