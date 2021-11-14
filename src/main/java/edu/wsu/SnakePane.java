@@ -108,8 +108,12 @@ public class SnakePane extends AnchorPane {
     private void createSnake() {
         this.snake = new LinkedList<>();
 
-        double centerX = ((int)(getWidth()/2/(2*RADIUS)))*2*RADIUS+RADIUS;
-        double centerY = ((int)(getHeight()/2/(2*RADIUS)))*2*RADIUS+RADIUS;
+        int gridWidth = (int) (0.5 + getWidth() / (2*RADIUS));
+        int gridHeight = (int) (0.5 + getHeight() / (2*RADIUS));
+
+        // make it odd multiple of radius in the center of the screen
+        double centerX = (gridWidth/2 * 2 + 1)*RADIUS; // note that the first division is an integer division
+        double centerY = (gridHeight/2 * 2 + 1)*RADIUS;
         Circle head = new Circle(centerX, centerY, RADIUS, this.gameInfo.getHeadColor());
         snake.add(head);
         for (int i = 1; i <= this.gameInfo.getSnakeLength(); i++) {
@@ -141,7 +145,7 @@ public class SnakePane extends AnchorPane {
                 e -> processGameEvents()));
         timeline.play();
 
-        this.setOnKeyPressed(event -> {
+        this.getScene().setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case SPACE:
                     if (timeline.getStatus() == Animation.Status.PAUSED && restartMessage != null) {
@@ -171,7 +175,6 @@ public class SnakePane extends AnchorPane {
                     break;
             }
         });
-        this.requestFocus();
 
     }
 
