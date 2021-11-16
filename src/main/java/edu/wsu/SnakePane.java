@@ -7,6 +7,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -106,6 +107,7 @@ public class SnakePane extends AnchorPane {
     }
 
     private void createSnake() {
+        int snakeLen = Math.max(this.gameInfo.getSnakeLength(), this.snake != null ? this.snake.size() : 0);
         this.snake = new LinkedList<>();
 
         int gridWidth = (int) (0.5 + getWidth() / (2*RADIUS));
@@ -116,7 +118,7 @@ public class SnakePane extends AnchorPane {
         double centerY = (gridHeight/2 * 2 + 1)*RADIUS;
         Circle head = new Circle(centerX, centerY, RADIUS, this.gameInfo.getHeadColor());
         snake.add(head);
-        for (int i = 1; i <= this.gameInfo.getSnakeLength(); i++) {
+        for (int i = 1; i <= snakeLen; i++) {
             Circle bodySegment = new Circle(centerX - i * 2 *RADIUS, centerY, RADIUS, this.gameInfo.getBodyColor());
             snake.add(bodySegment);
         }
@@ -136,6 +138,7 @@ public class SnakePane extends AnchorPane {
         generateFruits();
         getChildren().addAll(fruitCollection);
 
+        drawGrid();
         gameInfo.setLivesRemaining(gameInfo.getLivesRemaining()-1);
 
         timeline = new Timeline();
@@ -232,14 +235,37 @@ public class SnakePane extends AnchorPane {
         generateFruits();
         getChildren().addAll(fruitCollection);
 
-        gameInfo.setLivesRemaining(gameInfo.getLivesRemaining()-1);
-
+        drawGrid();
         if (restartMessage == null) {
-            Text text = new Text("Press space to continue. Number of lives remaining: " + gameInfo.getLivesRemaining());
-            text.setFont(Font.font ("Verdana", 20));
-            text.setFill(Color.BLACK);
-            restartMessage = new StackPane(text);
-            ((StackPane) this.getParent()).getChildren().add(restartMessage);
+            restartMessage = new StackPane();
+        }
+        Text text = new Text("Press space to continue. Number of lives remaining: " + gameInfo.getLivesRemaining());
+        text.setFont(Font.font ("Verdana", 20));
+        text.setFill(Color.BLACK);
+        restartMessage.getChildren().clear();
+        restartMessage.getChildren().add(text);
+        ((StackPane) this.getParent()).getChildren().add(restartMessage);
+        gameInfo.setLivesRemaining(gameInfo.getLivesRemaining()-1);
+    }
+
+    private void drawGrid() {
+        // draw grid at 2*RADIUS
+        double gridSize = 2 * RADIUS;
+
+        for(int i = 1; i < getWidth()/gridSize; i++) {
+            // vertical line
+            Line line = new Line(i*gridSize, 0, i*gridSize, getHeight());
+            line.getStrokeDashArray().addAll(4d, 8d);
+            line.setStroke(Color.CORNFLOWERBLUE);
+            this.getChildren().add(line);
+        }
+
+        for(int i = 1; i < getHeight()/gridSize; i++) {
+            // horizontal line
+            Line line = new Line(0, i*gridSize, getWidth(), i*gridSize);
+            line.getStrokeDashArray().addAll(4d, 8d);
+            line.setStroke(Color.CORNFLOWERBLUE);
+            this.getChildren().add(line);
         }
     }
 
@@ -247,7 +273,7 @@ public class SnakePane extends AnchorPane {
 
         StackPane parent = (StackPane) this.getScene().getRoot();
         StackPane pane = new StackPane();
-        Text text = new Text("Game Over, " + (gameInfo.getPlayerName().length() == 0 ? "" : ", ") + "score " + gameInfo.getScore());
+        Text text = new Text("Game Over" + (gameInfo.getPlayerName().length() == 0 ? "" : " " + gameInfo.getPlayerName()) + ", score " + gameInfo.getScore());
         text.setFont(Font.font ("Verdana", 20));
         text.setFill(Color.RED);
         pane.getChildren().add(text);
