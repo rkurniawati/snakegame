@@ -255,7 +255,6 @@ public class SnakePane extends AnchorPane {
         for(int i = 1; i < getWidth()/gridSize; i++) {
             // vertical line
             Line line = new Line(i*gridSize, 0, i*gridSize, getHeight());
-            line.getStrokeDashArray().addAll(4d, 8d);
             line.setStroke(Color.CORNFLOWERBLUE);
             this.getChildren().add(line);
         }
@@ -263,7 +262,6 @@ public class SnakePane extends AnchorPane {
         for(int i = 1; i < getHeight()/gridSize; i++) {
             // horizontal line
             Line line = new Line(0, i*gridSize, getWidth(), i*gridSize);
-            line.getStrokeDashArray().addAll(4d, 8d);
             line.setStroke(Color.CORNFLOWERBLUE);
             this.getChildren().add(line);
         }

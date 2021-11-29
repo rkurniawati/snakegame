@@ -64,7 +64,23 @@ public class TestApp extends Application {
                     }
                 }));
 
-        pane.setOnKeyPressed(event -> {
+        //MyHandler handler = new MyHandler(head, timeline);
+        pane.setOnKeyPressed(event -> processKey(event, head, timeline));
+
+        timeline.play();
+    }
+
+    class MyHandler implements EventHandler<KeyEvent> {
+        Circle head;
+        Timeline timeline;
+
+        public MyHandler(Circle head, Timeline timeline) {
+            this.head = head;
+            this.timeline = timeline;
+        }
+
+        @Override
+        public void handle(KeyEvent event) {
             double x = head.getCenterX();
             double y = head.getCenterY();
             switch (event.getCode()) {
@@ -88,8 +104,32 @@ public class TestApp extends Application {
                     timeline.play();
                     break;
             }
-        });
+        }
+    }
 
-        timeline.play();
+    private void processKey(KeyEvent event, Circle head, Timeline timeline) {
+            double x = head.getCenterX();
+            double y = head.getCenterY();
+            switch (event.getCode()) {
+                case UP:
+                    timeline.pause();
+                    head.setCenterY(Math.max(0, y - 2 * RADIUS));
+                    break;
+                case DOWN:
+                    timeline.pause();
+                    head.setCenterY(Math.min(400, y + 2 * RADIUS));
+                    break;
+                case LEFT:
+                    timeline.pause();
+                    head.setCenterX(Math.max(0, x - 2 * RADIUS));
+                    break;
+                case RIGHT:
+                    timeline.pause();
+                    head.setCenterX(Math.min(400, x + 2 * RADIUS));
+                    break;
+                case ESCAPE:
+                    timeline.play();
+                    break;
+            }
     }
 }
